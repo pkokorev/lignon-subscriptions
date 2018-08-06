@@ -1,0 +1,87 @@
+enum Currency {
+	CHF
+}
+
+entity Price {
+	amount Long required min(100),
+    currency Currency required
+}
+
+entity Product {
+	name String required,
+    description String,
+    price Price required
+}
+
+entity ProductPackage {
+	quantity Integer required min(1),
+    product Product required
+}
+
+entity Address {
+	firstName String required,
+    lastName String required,
+    street String required,
+    number Integer min(1),
+    zip Integer required min(1000) max(9999),
+    country String required
+}
+
+entity Circuit {
+	number Integer required,
+    name String required
+}
+
+entity Client {
+	email String required,
+    address Address required,
+	circuit Circuit
+}
+
+entity DeliveryOption {
+	quantity Integer required min(1),
+    frequency Integer required min(1),
+    timeUnit String required
+}
+
+entity Subscription {
+	active Boolean required,
+    created Instant required,
+    client Client required,
+    productPackage ProductPackage required,
+    deliveryOption DeliveryOption required
+}
+
+entity SubscriptionTranche {
+	start Instant required,
+    subscription Subscription required
+}
+
+relationship OneToOne {
+	Client{address} to Address
+	Client{circuit} to Circuit
+}
+
+relationship OneToOne {
+	Product{price} to Price
+}
+
+relationship OneToOne {
+	ProductPackage{product} to Product
+}
+
+relationship OneToOne {
+	Subscription{client} to Client
+	Subscription{productPackage} to ProductPackage
+	Subscription{deliveryOption} to DeliveryOption
+}
+
+relationship ManyToOne {
+	SubscriptionTranche{subscription} to Subscription
+}
+
+
+paginate * with pagination
+dto * with mapstruct
+service all with serviceImpl
+angularSuffix * with ui
